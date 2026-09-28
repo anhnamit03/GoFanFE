@@ -1,5 +1,5 @@
-import ProductCard from '../components/Product/ProductCard'
-import './Products.css'
+import ProductCard from '../Product/ProductCard'
+import './ProductSection.css'
 
 const products = [
   {
@@ -28,17 +28,17 @@ const products = [
   },
 ]
 
-function Products() {
+function ProductSection() {
   return (
-    <section className="products-page">
-      <div className="products-container">
+    <section className="product-section">
+      <div className="product-container">
 
-        <div className="products-heading">
+        <div className="section-heading">
           <p>Sản phẩm</p>
-          <h1>Tất cả sản phẩm</h1>
+          <h2>Sản phẩm nổi bật</h2>
         </div>
 
-        <div className="products-list">
+        <div className="product-list">
           {products.map((product) => (
             <ProductCard
               key={product.id}
@@ -52,4 +52,4 @@ function Products() {
   )
 }
 
-export default Products
+export default ProductSection

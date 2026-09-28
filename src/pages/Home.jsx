@@ -1,6 +1,14 @@
+import CategorySection from '../components/Home/CategorySection'
+import HeroBanner from '../components/Home/HeroBanner'
+import ProductSection from '../components/Home/ProductSection'
+
 function Home() {
   return (
-    <h1>GoFan Home</h1>
+    <div>
+      <HeroBanner />
+      <CategorySection />
+      <ProductSection />
+    </div>
   )
 }
 

@@ -1,4 +1,5 @@
 import Header from '../components/Header'
+import Footer from '../components/Footer'
 
 function CustomerLayout({ children }) {
   return (
@@ -9,9 +10,7 @@ function CustomerLayout({ children }) {
         {children}
       </main>
 
-      <footer>
-        <p>GoFan</p>
-      </footer>
+      <Footer />
     </div>
   )
 }

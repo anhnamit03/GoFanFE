@@ -1,0 +1,30 @@
+.products-page {
+  padding: 70px 24px;
+  background: #f9fafb;
+}
+
+.products-container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.products-heading {
+  margin-bottom: 32px;
+}
+
+.products-heading p {
+  margin-bottom: 8px;
+  font-size: 14px;
+  color: #6b7280;
+}
+
+.products-heading h1 {
+  font-size: 32px;
+  color: #111827;
+}
+
+.products-list {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+}

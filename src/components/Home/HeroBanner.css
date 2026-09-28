@@ -1,0 +1,45 @@
+.hero {
+  min-height: 420px;
+  display: flex;
+  align-items: center;
+  padding: 60px 80px;
+  background: #111827;
+  color: white;
+}
+
+.hero-content {
+  max-width: 650px;
+}
+
+.hero-subtitle {
+  font-size: 18px;
+  margin-bottom: 16px;
+}
+
+.hero-title {
+  font-size: 48px;
+  line-height: 1.15;
+  margin-bottom: 20px;
+}
+
+.hero-description {
+  font-size: 18px;
+  line-height: 1.6;
+  margin-bottom: 30px;
+  color: #d1d5db;
+}
+
+.hero-button {
+  display: inline-block;
+  padding: 14px 24px;
+  border: none;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #111827;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.hero-button:hover {
+  background: #e5e7eb;
+}
