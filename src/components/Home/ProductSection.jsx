@@ -1,34 +1,32 @@
+import { useEffect, useState } from 'react'
 import ProductCard from '../Product/ProductCard'
+import { getProducts } from '../../services/productService'
 import './ProductSection.css'
 
-const products = [
-  {
-    id: 1,
-    name: 'Áo thun Basic',
-    price: 250000,
-    image: 'https://placehold.co/600x600',
-  },
-  {
-    id: 2,
-    name: 'Áo sơ mi nam',
-    price: 450000,
-    image: 'https://placehold.co/600x600',
-  },
-  {
-    id: 3,
-    name: 'Quần jean',
-    price: 550000,
-    image: 'https://placehold.co/600x600',
-  },
-  {
-    id: 4,
-    name: 'Giày sneaker',
-    price: 850000,
-    image: 'https://placehold.co/600x600',
-  },
-]
-
 function ProductSection() {
+  const [products, setProducts] = useState([])
+  const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState('')
+
+  useEffect(() => {
+    let isMounted = true
+
+    getProducts()
+      .then((data) => {
+        if (isMounted) setProducts(data)
+      })
+      .catch((fetchError) => {
+        if (isMounted) setError(fetchError.message)
+      })
+      .finally(() => {
+        if (isMounted) setIsLoading(false)
+      })
+
+    return () => {
+      isMounted = false
+    }
+  }, [])
+
   return (
     <section className="product-section">
       <div className="product-container">
@@ -39,11 +37,10 @@ function ProductSection() {
         </div>
 
         <div className="product-list">
-          {products.map((product) => (
-            <ProductCard
-              key={product.id}
-              product={product}
-            />
+          {isLoading && <p>Đang tải sản phẩm...</p>}
+          {!isLoading && error && <p role="alert">{error}</p>}
+          {!isLoading && !error && products.slice(0, 4).map((product) => (
+            <ProductCard key={product.id} product={product} />
           ))}
         </div>
 

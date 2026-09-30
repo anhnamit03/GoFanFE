@@ -1,9 +1,29 @@
-import { createContext, useContext, useState } from 'react'
+import { createContext, useContext, useEffect, useState } from 'react'
 
 const CartContext = createContext()
+const FAVORITES_STORAGE_KEY = 'gofan-favorites'
+
+function getSavedFavorites() {
+  try {
+    const savedFavorites = JSON.parse(localStorage.getItem(FAVORITES_STORAGE_KEY) || '[]')
+    return Array.isArray(savedFavorites) ? savedFavorites : []
+  } catch (error) {
+    console.error('Không thể đọc danh sách yêu thích đã lưu.', error)
+    return []
+  }
+}
 
 export function CartProvider({ children }) {
   const [cartItems, setCartItems] = useState([])
+  const [favoriteItems, setFavoriteItems] = useState(getSavedFavorites)
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(FAVORITES_STORAGE_KEY, JSON.stringify(favoriteItems))
+    } catch (error) {
+      console.error('Không thể lưu danh sách yêu thích.', error)
+    }
+  }, [favoriteItems])
 
   const addToCart = (product) => {
     setCartItems((currentItems) => {
@@ -60,6 +80,31 @@ export function CartProvider({ children }) {
     )
   }
 
+  const removeFromCart = (productId) => {
+    setCartItems((currentItems) =>
+      currentItems.filter((item) => item.id !== productId)
+    )
+  }
+
+  const toggleFavorite = (product) => {
+    setFavoriteItems((currentItems) => {
+      if (currentItems.some((item) => item.id === product.id)) {
+        return currentItems.filter((item) => item.id !== product.id)
+      }
+
+      return [...currentItems, product]
+    })
+  }
+
+  const removeFavorite = (productId) => {
+    setFavoriteItems((currentItems) =>
+      currentItems.filter((item) => item.id !== productId)
+    )
+  }
+
+  const isFavorite = (productId) =>
+    favoriteItems.some((item) => item.id === productId)
+
   return (
     <CartContext.Provider
       value={{
@@ -67,6 +112,11 @@ export function CartProvider({ children }) {
         addToCart,
         increaseQuantity,
         decreaseQuantity,
+        removeFromCart,
+        favoriteItems,
+        toggleFavorite,
+        removeFavorite,
+        isFavorite,
       }}
     >
       {children}

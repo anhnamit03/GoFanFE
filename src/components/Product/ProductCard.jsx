@@ -1,9 +1,11 @@
 import { Link } from 'react-router-dom'
+import { Heart } from 'lucide-react'
 import { useCart } from '../../context/CartContext'
 import './ProductCard.css'
 
 function ProductCard({ product }) {
-  const { addToCart } = useCart()
+  const { addToCart, isFavorite, toggleFavorite } = useCart()
+  const favorite = isFavorite(product.id)
 
   const handleAddToCart = () => {
     addToCart(product)
@@ -21,6 +23,16 @@ function ProductCard({ product }) {
           className="product-card-image"
         />
       </Link>
+
+      <button
+        type="button"
+        className={`product-favorite-button${favorite ? ' product-favorite-active' : ''}`}
+        aria-label={favorite ? `Bỏ yêu thích ${product.name}` : `Thêm ${product.name} vào yêu thích`}
+        aria-pressed={favorite}
+        onClick={() => toggleFavorite(product)}
+      >
+        <Heart size={18} fill={favorite ? 'currentColor' : 'none'} />
+      </button>
 
       <div className="product-card-content">
         <Link
