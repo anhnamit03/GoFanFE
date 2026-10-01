@@ -1,4 +1,4 @@
-const API_URL = 'http://localhost:5142/api/Category'
+const API_URL = '/api/Category'
 
 export async function getCategories() {
   const response = await fetch(API_URL)
@@ -7,5 +7,6 @@ export async function getCategories() {
     throw new Error('Không thể lấy danh sách Category')
   }
 
-  return await response.json()
+  const result = await response.json()
+  return Array.isArray(result) ? result : result.data || []
 }

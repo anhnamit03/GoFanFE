@@ -1,0 +1,169 @@
+.tech-spotlight-section {
+  padding: 100px 0;
+  background: radial-gradient(circle at 90% 10%, #0d1b2e 0%, #080d1a 100%);
+  color: var(--text-on-dark);
+  position: relative;
+  overflow: hidden;
+}
+
+.tech-spotlight-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  gap: 70px;
+}
+
+/* Media Column */
+.tech-spotlight-media {
+  position: relative;
+}
+
+.tech-media-frame {
+  position: relative;
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.5);
+  aspect-ratio: 16 / 10;
+}
+
+.tech-main-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.tech-media-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 50%, rgba(8, 13, 26, 0.6) 100%);
+  pointer-events: none;
+}
+
+.tech-floating-stat {
+  position: absolute;
+  bottom: 24px;
+  left: 24px;
+  background: rgba(15, 23, 42, 0.85);
+  backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 14px 20px;
+  border-radius: var(--radius-lg);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+}
+
+.stat-num {
+  display: block;
+  font-size: 24px;
+  font-weight: 800;
+  color: #ff7d57;
+  line-height: 1;
+  margin-bottom: 4px;
+}
+
+.stat-desc {
+  display: block;
+  font-size: 12px;
+  color: #cbd5e1;
+  font-weight: 500;
+}
+
+/* Content Column */
+.tech-spotlight-heading {
+  font-size: 40px;
+  font-weight: 800;
+  color: #ffffff;
+  line-height: 1.2;
+  margin: 12px 0 20px;
+}
+
+.tech-spotlight-desc {
+  font-size: 16px;
+  line-height: 1.65;
+  color: var(--text-on-dark-muted);
+  margin-bottom: 36px;
+}
+
+.tech-pillars-list {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  margin-bottom: 40px;
+}
+
+.tech-pillar-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 18px;
+}
+
+.tech-pillar-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: rgba(238, 77, 45, 0.15);
+  border: 1px solid rgba(238, 77, 45, 0.35);
+  color: #ff7d57;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.tech-pillar-row h4 {
+  font-size: 17px;
+  font-weight: 700;
+  color: #ffffff;
+  margin-bottom: 6px;
+}
+
+.tech-pillar-row p {
+  font-size: 14px;
+  color: #94a3b8;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.tech-cta-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 28px;
+  background: #ffffff;
+  color: #0f172a;
+  border-radius: var(--radius-full);
+  font-weight: 700;
+  font-size: 15px;
+  box-shadow: 0 10px 25px rgba(255, 255, 255, 0.2);
+  transition: all var(--transition-normal);
+}
+
+.tech-cta-btn:hover {
+  background: #ee4d2d;
+  color: #ffffff;
+  transform: translateY(-2px);
+  box-shadow: 0 15px 30px rgba(238, 77, 45, 0.4);
+}
+
+@media (max-width: 1024px) {
+  .tech-spotlight-grid {
+    grid-template-columns: 1fr;
+    gap: 48px;
+  }
+
+  .tech-spotlight-heading {
+    font-size: 32px;
+  }
+}
+
+@media (max-width: 640px) {
+  .tech-spotlight-section {
+    padding: 60px 0;
+  }
+
+  .tech-spotlight-heading {
+    font-size: 26px;
+  }
+}

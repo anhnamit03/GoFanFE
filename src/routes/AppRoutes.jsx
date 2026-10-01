@@ -8,6 +8,8 @@ import Cart from '../pages/Cart'
 import Favorites from '../pages/Favorites'
 import Login from '../pages/Login'
 import Checkout from '../pages/Checkout'
+import Myself from '../pages/Myself'
+import OrderHistory from '../pages/OrderHistory'
 
 function AppRoutes() {
   return (
@@ -20,6 +22,8 @@ function AppRoutes() {
         <Route path="/favorites" element={<Favorites />} />
         <Route path="/checkout" element={<Checkout />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/myself" element={<Myself />} />
+        <Route path="/orders" element={<OrderHistory />} />
       </Routes>
     </CustomerLayout>
   )

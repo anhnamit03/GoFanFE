@@ -1,19 +1,26 @@
 import { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
+import { ArrowRight, Sparkles } from 'lucide-react'
 import ProductCard from '../Product/ProductCard'
 import { getProducts } from '../../services/productService'
+import { getCategories } from '../../services/categoryService'
 import './ProductSection.css'
 
 function ProductSection() {
   const [products, setProducts] = useState([])
+  const [categories, setCategories] = useState([])
+  const [activeCatId, setActiveCatId] = useState('all')
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState('')
 
   useEffect(() => {
     let isMounted = true
 
-    getProducts()
-      .then((data) => {
-        if (isMounted) setProducts(data)
+    Promise.all([getProducts(), getCategories()])
+      .then(([prods, cats]) => {
+        if (!isMounted) return
+        setProducts(prods)
+        setCategories(cats)
       })
       .catch((fetchError) => {
         if (isMounted) setError(fetchError.message)
@@ -27,23 +34,63 @@ function ProductSection() {
     }
   }, [])
 
+  const filteredProducts = activeCatId === 'all'
+    ? products
+    : products.filter((p) => String(p.categoryId) === String(activeCatId))
+
   return (
-    <section className="product-section">
-      <div className="product-container">
+    <section className="product-section" id="featured-products">
+      <div className="landing-container">
+        <div className="product-section-header">
+          <div>
+            <span className="section-eyebrow">BỘ SƯU TẬP CAO CẤP</span>
+            <h2 className="section-title">Sản Phẩm Được Yêu Thích Nhất</h2>
+          </div>
 
-        <div className="section-heading">
-          <p>Sản phẩm</p>
-          <h2>Sản phẩm nổi bật</h2>
+          <div className="product-cat-filters">
+            <button
+              type="button"
+              className={`cat-filter-btn ${activeCatId === 'all' ? 'cat-filter-active' : ''}`}
+              onClick={() => setActiveCatId('all')}
+            >
+              Tất cả ({products.length})
+            </button>
+            {categories.slice(0, 5).map((cat) => (
+              <button
+                key={cat.id}
+                type="button"
+                className={`cat-filter-btn ${String(activeCatId) === String(cat.id) ? 'cat-filter-active' : ''}`}
+                onClick={() => setActiveCatId(String(cat.id))}
+              >
+                {cat.name}
+              </button>
+            ))}
+          </div>
         </div>
 
-        <div className="product-list">
-          {isLoading && <p>Đang tải sản phẩm...</p>}
-          {!isLoading && error && <p role="alert">{error}</p>}
-          {!isLoading && !error && products.slice(0, 4).map((product) => (
-            <ProductCard key={product.id} product={product} />
-          ))}
-        </div>
+        {isLoading ? (
+          <div className="product-loading">
+            <Sparkles size={24} className="animate-spin" />
+            <p>Đang tải danh sách quạt...</p>
+          </div>
+        ) : error ? (
+          <p role="alert" className="product-error">{error}</p>
+        ) : (
+          <>
+            <div className="product-grid-layout">
+              {filteredProducts.slice(0, 8).map((product) => (
+                <ProductCard key={product.id} product={product} />
+              ))}
+            </div>
 
+            <div className="product-bottom-action">
+              <Link to="/products" className="product-see-more-btn">
+                <span>Khám phá toàn bộ {products.length} sản phẩm GoFan</span>
+                <ArrowRight size={18} />
+              </Link>
+            </div>
+          </>
+        )}
       </div>
     </section>
   )

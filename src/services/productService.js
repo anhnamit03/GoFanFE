@@ -1,9 +1,11 @@
-const API_URL = 'http://localhost:5142/api/Product'
+const API_URL = '/api/Product'
 
 function normalizeProduct(product) {
   return {
     ...product,
-    price: product.salePrice ?? product.basePrice ?? 0,
+    price: product.discountPrice ?? product.salePrice ?? product.basePrice ?? 0,
+    salePrice: product.discountPrice ?? product.salePrice ?? null,
+    discountPercent: product.promotion?.discountPercent ?? product.discountPercent,
     image: product.imageUrl || 'https://placehold.co/600x600?text=GoFan',
   }
 }
@@ -15,7 +17,8 @@ export async function getProducts() {
     throw new Error('Không thể lấy danh sách Product')
   }
 
-  const products = await response.json()
+  const result = await response.json()
+  const products = Array.isArray(result) ? result : result.data || []
   return products.map(normalizeProduct)
 }
 
@@ -26,6 +29,6 @@ export async function getProductById(id) {
     throw new Error('Không thể lấy Product')
   }
 
-  const product = await response.json()
-  return normalizeProduct(product)
+  const result = await response.json()
+  return normalizeProduct(result.data || result)
 }

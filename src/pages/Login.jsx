@@ -1,15 +1,19 @@
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { ArrowLeft, Eye, EyeOff, LockKeyhole, Mail, Wind } from 'lucide-react'
+import { useAuth } from '../context/useAuth'
 import './Login.css'
 
 function Login() {
   const [mode, setMode] = useState('login')
   const [showPassword, setShowPassword] = useState(false)
   const [message, setMessage] = useState('')
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const navigate = useNavigate()
+  const { login, register } = useAuth()
   const isRegistering = mode === 'register'
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault()
     const formData = new FormData(event.currentTarget)
 
@@ -18,9 +22,36 @@ function Login() {
       return
     }
 
-    setMessage(isRegistering
-      ? 'API đăng ký chưa được kết nối. Thông tin của bạn chưa được gửi đi.'
-      : 'API đăng nhập chưa được kết nối. Thông tin của bạn chưa được gửi đi.')
+    setIsSubmitting(true)
+    setMessage('')
+
+    try {
+      if (isRegistering) {
+        const result = await register({
+          fullName: formData.get('fullName'),
+          phone: formData.get('phone'),
+          email: formData.get('email'),
+          password: formData.get('password'),
+        })
+
+        if (result.token) {
+          navigate('/myself')
+        } else {
+          setMode('login')
+          setMessage('Đăng ký thành công. Hãy đăng nhập để tiếp tục.')
+        }
+      } else {
+        await login({
+          identifier: formData.get('email'),
+          password: formData.get('password'),
+        })
+        navigate('/myself')
+      }
+    } catch (error) {
+      setMessage(error.message || 'Không thể kết nối máy chủ.')
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   return (
@@ -101,18 +132,44 @@ function Login() {
                     onChange={() => setMessage('')}
                   />
                 </div>
+                <label htmlFor="register-phone">Số điện thoại</label>
+                <div className="login-input-wrap">
+                  <input
+                    id="register-phone"
+                    name="phone"
+                    type="tel"
+                    placeholder="0901 234 567"
+                    autoComplete="tel"
+                    required
+                    onChange={() => setMessage('')}
+                  />
+                </div>
+                <label htmlFor="confirm-password">Xác nhận mật khẩu</label>
+                <div className="login-input-wrap">
+                  <LockKeyhole size={18} aria-hidden="true" />
+                  <input
+                    id="confirm-password"
+                    name="confirmPassword"
+                    type="password"
+                    placeholder="Nhập lại mật khẩu"
+                    autoComplete="new-password"
+                    minLength={6}
+                    required
+                    onChange={() => setMessage('')}
+                  />
+                </div>
               </>
             )}
 
-            <label htmlFor="login-email">Email</label>
+            <label htmlFor="login-email">Email hoặc số điện thoại</label>
             <div className="login-input-wrap">
               <Mail size={18} aria-hidden="true" />
               <input
                 id="login-email"
                 name="email"
-                type="email"
-                placeholder="ban@email.com"
-                autoComplete="email"
+                type="text"
+                placeholder="ban@email.com hoặc 0901 234 567"
+                autoComplete="username"
                 required
                 onChange={() => setMessage('')}
               />
@@ -166,13 +223,13 @@ function Login() {
 
             {message && <p className="login-message" role="status">{message}</p>}
 
-            <button className="login-submit" type="submit">
-              {isRegistering ? 'Tạo tài khoản' : 'Đăng nhập'}
+            <button className="login-submit" type="submit" disabled={isSubmitting}>
+              {isSubmitting ? 'Đang xử lý...' : (isRegistering ? 'Tạo tài khoản' : 'Đăng nhập')}
             </button>
           </form>
 
           <p className="login-security-note">
-            <LockKeyhole size={14} /> Biểu mẫu chưa kết nối máy chủ; dữ liệu không được gửi đi
+            <LockKeyhole size={14} /> Thông tin được gửi an toàn đến máy chủ GoFan
           </p>
         </section>
       </div>

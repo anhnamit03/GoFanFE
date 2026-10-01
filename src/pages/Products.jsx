@@ -1,5 +1,6 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useMemo } from 'react'
 import { useSearchParams } from 'react-router-dom'
+import { Wind } from 'lucide-react'
 import ProductCard from '../components/Product/ProductCard'
 import { getProducts } from '../services/productService'
 import './Products.css'
@@ -16,19 +17,18 @@ function Products() {
   const [products, setProducts] = useState([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState('')
+
   const searchTerm = searchParams.get('search')?.trim() ?? ''
-  const normalizedSearchTerm = normalizeSearchText(searchTerm)
-  const filteredProducts = products.filter((product) => {
-    const searchableText = normalizeSearchText(`${product.name} ${product.sku}`)
-    return searchableText.includes(normalizedSearchTerm)
-  })
+  const selectedCategory = searchParams.get('category')?.trim() ?? 'all'
 
   useEffect(() => {
     let isMounted = true
 
     getProducts()
-      .then((data) => {
-        if (isMounted) setProducts(data)
+      .then((productsData) => {
+        if (isMounted) {
+          setProducts(productsData)
+        }
       })
       .catch((fetchError) => {
         if (isMounted) setError(fetchError.message)
@@ -42,28 +42,61 @@ function Products() {
     }
   }, [])
 
+  // Filter products by search term or category from URL
+  const filteredProducts = useMemo(() => {
+    const normalizedTerm = normalizeSearchText(searchTerm)
+
+    return products.filter((product) => {
+      if (normalizedTerm) {
+        const searchableText = normalizeSearchText(`${product.name} ${product.sku} ${product.description || ''}`)
+        if (!searchableText.includes(normalizedTerm)) return false
+      }
+
+      if (selectedCategory && selectedCategory !== 'all') {
+        if (String(product.categoryId) !== selectedCategory) return false
+      }
+
+      return true
+    })
+  }, [products, searchTerm, selectedCategory])
+
   return (
-    <section className="products-page">
-      <div className="products-container">
-
-        <div className="products-heading">
-          <p>Sản phẩm</p>
-          <h1>{searchTerm ? `Kết quả tìm kiếm: ${searchTerm}` : 'Tất cả sản phẩm'}</h1>
-        </div>
-
-        <div className="products-list">
-          {isLoading && <p>Đang tải sản phẩm...</p>}
-          {!isLoading && error && <p role="alert">{error}</p>}
-          {!isLoading && !error && filteredProducts.length === 0 && (
-            <p>{searchTerm ? 'Không tìm thấy sản phẩm phù hợp.' : 'Hiện chưa có sản phẩm.'}</p>
+    <div className="gofan-products-page">
+      <div className="products-page-container">
+        <div className="products-grid-column">
+          {isLoading && (
+            <div className="products-loading-state">
+              <Wind size={36} className="animate-spin text-primary" />
+              <p>Đang tải danh sách quạt GoFan...</p>
+            </div>
           )}
-          {!isLoading && !error && filteredProducts.map((product) => (
-            <ProductCard key={product.id} product={product} />
-          ))}
-        </div>
 
+          {!isLoading && error && (
+            <div className="products-error-state" role="alert">
+              <p>{error}</p>
+              <button type="button" onClick={() => window.location.reload()}>
+                Thử lại
+              </button>
+            </div>
+          )}
+
+          {!isLoading && !error && filteredProducts.length === 0 && (
+            <div className="products-empty-state">
+              <h3>Không tìm thấy sản phẩm nào</h3>
+              <p>Vui lòng quay lại hoặc chọn danh mục khác từ thanh menu.</p>
+            </div>
+          )}
+
+          {!isLoading && !error && filteredProducts.length > 0 && (
+            <div className="products-grid">
+              {filteredProducts.map((product) => (
+                <ProductCard key={product.id} product={product} />
+              ))}
+            </div>
+          )}
+        </div>
       </div>
-    </section>
+    </div>
   )
 }
 
